@@ -1,31 +1,33 @@
+import React, { useEffect, useState } from "react";
 import './App.css';
+import { Button } from 'react-bootstrap';
 
 function App() {
+  const [quotes, setQuotes] = useState("");
 
-  let curDate = new Date();
-  curDate = curDate.getHours();
-  let greeting = '';
-  const cssStyle = {};
+  const getQuotes = () => {
+    fetch("https://type.fit/api/quotes")
+    .then((res) => res.json())
+    .then((data) => {
+      let randomNum = Math.floor(Math.random() * data.length);
+      setQuotes(data[randomNum]);
+    }); 
+  };
 
-  if(curDate >=1 && curDate <12){
-    greeting = 'Good Morning';
-    cssStyle.color = 'Green';
-  }
-  else if(curDate >=12 && curDate <19){
-    greeting = 'Good Afternoon';
-    cssStyle.color = 'Orange';
-  }
-  else{
-    greeting = 'Good Night';
-    cssStyle.color = 'Grey';    
-  }
+  useEffect(() => {
+    getQuotes();
+  }, []);
 
   return (
-    <div className="App">
-    <div className="Main">
-     <h1>Hello Shad Khan, <span style={cssStyle}> { greeting } </span></h1>
-    </div>
-    </div>
+    <>
+      <div className="Container">
+        <div className="Quotes">
+        <p className="Text">{ quotes.text }</p>
+        <p className="Author">Said by: <span>{ quotes.author }</span></p>
+        <Button className="btn btn-secondary" onClick={ getQuotes }>Get Quote</Button>
+        </div>
+      </div>
+    </>
   );
 }
 
